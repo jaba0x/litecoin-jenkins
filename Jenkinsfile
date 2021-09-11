@@ -26,7 +26,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh label: 'build container image',
-                    script: 'docker build ${IMAGE} -f Dockerfile --no-cache .'
+                    script: 'whoami'
             }
         }
         stage('Push') {
