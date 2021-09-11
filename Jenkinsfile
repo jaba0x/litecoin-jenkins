@@ -25,7 +25,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh label: 'build container image',
-                   script: 'docker build . 752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest -f Dockerfile . --no-cache'
+                   script: 'docker build -t 752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest -f Dockerfile . --no-cache'
             }
         }
         stage('Push') {
