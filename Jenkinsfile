@@ -6,8 +6,9 @@ pipeline {
     }
     environment {
         PROJECT = "litecoin"
-        IMAGE = "jaba0x/litecoin:0.18.1"
+        IMAGE = "752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest"
         DEPLOYMENT = "litecoin"
+        KUBECONFIG = "/root/.kube/kubeconfig"
     }
     stages {
         stage('create aws profile') {
@@ -25,25 +26,19 @@ pipeline {
         stage('Build') {
             steps {
                 sh label: 'build container image',
-                   script: 'docker build -t 752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest -f Dockerfile . --no-cache'
+                    script: 'docker build ${IMAGE} -f Dockerfile --no-cache .'
             }
         }
         stage('Push') {
             steps {
                 sh label: 'push image',
-                   script:  'docker push 752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest'
+                    script:  'docker push ${IMAGE}'
             }
         }
         stage('Deploy to k8s') {
-            environment {
-                KUBECONFIG = "/root/.kube/kubeconfig"
-            }
             steps {
                 sh label: 'deploy',
-                   script: '''
-                            kubectl apply --kubeconfig=${KUBECONFIG} -f k8s-manifest.yaml
-                            kubectl --kubeconfig=${KUBECONFIG} set image deployments/${DEPLOYMENT} ${DEPLOYMENT}=${IMAGE}:${GIT_COMMIT}
-                            '''
+                   script: 'kubectl apply --kubeconfig=${KUBECONFIG} -f k8s-manifest.yaml && kubectl --kubeconfig=${KUBECONFIG} set image deployments/${DEPLOYMENT} ${DEPLOYMENT}=${IMAGE}'
             }
         }
 }
