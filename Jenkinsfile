@@ -14,7 +14,8 @@ pipeline {
         stage('create aws profile') {
             steps {
                 sh label: 'aws configure',
-                   script: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} --profile roydemus && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} --profile roydemus'
+                script: 'systemctl enable --now docker-ce'
+                //    script: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} --profile roydemus && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} --profile roydemus'
             }
         }
         stage('ecr login') {
