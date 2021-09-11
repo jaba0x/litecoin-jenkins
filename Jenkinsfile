@@ -17,7 +17,7 @@ pipeline {
                    script: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} --profile roydemus && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} --profile roydemus'
             }
         }
-        stage('Before steps') {
+        stage('ecr login') {
             steps {
                 sh label: 'authenticate ecr',
                    script: 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 752023216802.dkr.ecr.us-east-1.amazonaws.com'
