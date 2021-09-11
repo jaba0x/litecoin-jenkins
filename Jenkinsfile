@@ -10,35 +10,41 @@ pipeline {
         DEPLOYMENT = "litecoin"
     }
     stages {
-        stage('Build') {
+        stage('create aws profile') {
             steps {
-                sh label: 'build docker image',
-                   script: 'docker build . \
-                            -f Dockerfile \
-                            -t jaba0x/litecoin:${GIT_COMMIT} \
-                            -t jaba0x/litecoin:latest'
+                sh label: 'aws configure',
+                   script: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} --profile roydemus && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} --profile roydemus'
             }
         }
-//         stage('Push') {
-//             steps {
-//                 sh label: 'push docker image',
-//                    script:  '''
-//                             docker push jaba0x/litecoin:${GIT_COMMIT}
-//                             docker push jaba0x/litecoin:latest
-//                             '''
-//             }
-//         }
-//         stage('Deploy to k8s') {
-//             environment {
-//                 KUBECONFIG = "/root/.kube/kubeconfig"
-//             }
-//             steps {
-//                 sh label: 'deploy',
-//                    script: '''
-//                             kubectl apply --kubeconfig=${KUBECONFIG} -f k8s-manifest.yaml
-//                             kubectl --kubeconfig=${KUBECONFIG} set image deployments/${DEPLOYMENT} ${DEPLOYMENT}=${IMAGE}:${GIT_COMMIT}
-//                             '''
-//             }
-//         }
+        stage('Before steps') {
+            steps {
+                sh label: 'authenticate ecr',
+                   script: 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 752023216802.dkr.ecr.us-east-1.amazonaws.com'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh label: 'build container image',
+                   script: 'docker build . 752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest -f Dockerfile . --no-cache'
+            }
+        }
+        stage('Push') {
+            steps {
+                sh label: 'push image',
+                   script:  'docker push 752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest'
+            }
+        }
+        stage('Deploy to k8s') {
+            environment {
+                KUBECONFIG = "/root/.kube/kubeconfig"
+            }
+            steps {
+                sh label: 'deploy',
+                   script: '''
+                            kubectl apply --kubeconfig=${KUBECONFIG} -f k8s-manifest.yaml
+                            kubectl --kubeconfig=${KUBECONFIG} set image deployments/${DEPLOYMENT} ${DEPLOYMENT}=${IMAGE}:${GIT_COMMIT}
+                            '''
+            }
+        }
 }
 }
