@@ -8,7 +8,7 @@ pipeline {
         PROJECT = "litecoin"
         IMAGE = "752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest"
         DEPLOYMENT = "litecoin"
-        KUBECONFIG = "~/.kube/kubeconfig"
+        KUBECONFIG = "/var/lib/jenkins/.kube/kubeconfig"
         K8S_CLUSTER_NAME = "test-cluster"
         AWS_PROFILE_NAME = "roydemus"
     }
