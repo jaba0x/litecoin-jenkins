@@ -40,7 +40,7 @@ pipeline {
         stage('Deploy to k8s') {
             steps {
                 sh label: 'deploy',
-                   script: 'kubectl apply -f k8s-manifest.yaml && kubectl --kubeconfig=${KUBECONFIG} set image deployments/${DEPLOYMENT} ${DEPLOYMENT}=${IMAGE}'
+                   script: 'kubectl apply -f k8s-manifest.yaml'
             }
         }
 }
