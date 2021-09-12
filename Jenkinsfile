@@ -8,13 +8,15 @@ pipeline {
         PROJECT = "litecoin"
         IMAGE = "752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest"
         DEPLOYMENT = "litecoin"
-        KUBECONFIG = "/root/.kube/kubeconfig"
+        KUBECONFIG = "~/.kube/kubeconfig"
+        K8S_CLUSTER_NAME = "test-cluster"
+        AWS_PROFILE_NAME = "roydemus"
     }
     stages {
         stage('create aws profile') {
             steps {
                 sh label: 'aws configure',
-                   script: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} --profile roydemus && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} --profile roydemus'
+                   script: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} --profile ${AWS_PROFILE_NAME} && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} --profile ${AWS_PROFILE_NAME} && aws eks --region us-east-1 update-kubeconfig --name ${K8S_CLUSTER_NAME --profile ${AWS_PROFILE_NAME}}'
             }
         }
         stage('ecr login') {
@@ -38,7 +40,7 @@ pipeline {
         stage('Deploy to k8s') {
             steps {
                 sh label: 'deploy',
-                   script: 'kubectl apply --kubeconfig=${KUBECONFIG} -f k8s-manifest.yaml && kubectl --kubeconfig=${KUBECONFIG} set image deployments/${DEPLOYMENT} ${DEPLOYMENT}=${IMAGE}'
+                   script: 'kubectl apply -f k8s-manifest.yaml && kubectl --kubeconfig=${KUBECONFIG} set image deployments/${DEPLOYMENT} ${DEPLOYMENT}=${IMAGE}'
             }
         }
 }
