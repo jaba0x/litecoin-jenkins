@@ -15,8 +15,8 @@ pipeline {
     stages {
         stage('create aws profile') {
             steps {
-                sh label: 'aws configure',
-                   script: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} --profile ${AWS_PROFILE_NAME} && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} --profile ${AWS_PROFILE_NAME} && aws eks --region us-east-1 update-kubeconfig --name ${K8S_CLUSTER_NAME --profile ${AWS_PROFILE_NAME}}'
+                sh label: 'setup aws profile',
+                   script: 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} --profile ${AWS_PROFILE_NAME} && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} --profile ${AWS_PROFILE_NAME} && aws eks --region us-east-1 update-kubeconfig --name ${K8S_CLUSTER_NAME} --profile ${AWS_PROFILE_NAME}}'
             }
         }
         stage('ecr login') {
