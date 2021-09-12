@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: litecoin
-        image: jaba0x/litecoin:0.18.1
+        image: 752023216802.dkr.ecr.us-east-1.amazonaws.com/litecoin:latest
         volumeMounts:
         - name: litecoin
           mountPath: /home/litecoin/.litecoin
